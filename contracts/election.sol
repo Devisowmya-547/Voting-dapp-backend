@@ -47,37 +47,55 @@ contract Election {
         _;
     }
 
+    struct Candidate{
+        uint tdp;
+        uint ycp;
+        uint jsp;
+        uint bjp;
+        uint cng;
+        uint nota;
+    }
+    
+    Candidate[2] public candidate;
 
-    struct Candidate {
-        string partyName;
-        string candidateName;
-        uint voteCount;
+    function mlaVote(string memory str) public {
+        if (keccak256(abi.encodePacked("tdp")) == keccak256(abi.encodePacked(str))) {
+            candidate[0].tdp++;
+        }else if(keccak256(abi.encodePacked("ycp")) == keccak256(abi.encodePacked(str))){
+            candidate[0].ycp++;
+        }else if(keccak256(abi.encodePacked("jsp")) == keccak256(abi.encodePacked(str))){
+            candidate[0].jsp++;
+        }else if(keccak256(abi.encodePacked("bjp")) == keccak256(abi.encodePacked(str))){
+            candidate[0].bjp++;
+        }else if(keccak256(abi.encodePacked("cng")) == keccak256(abi.encodePacked(str))){
+            candidate[0].cng++;
+        }else{
+            candidate[0].nota++;
+        }
     }
 
-    mapping(string => mapping(string => mapping(string => Candidate))) public parties;
-
-    // function getParties() public view returns(mapping(string => mapping(string => mapping(string => Candidate)))){
-    //     return parties;
-    // }
-
-    function isParty(string memory _symbol, string memory location, string memory position) public view returns(bool) {
-        return (bytes(parties[location][position][_symbol].partyName).length != 0);
+    function mpVote(string memory str) public {
+        if (keccak256(abi.encodePacked("tdp")) == keccak256(abi.encodePacked(str))) {
+            candidate[1].tdp++;
+        }else if(keccak256(abi.encodePacked("ycp")) == keccak256(abi.encodePacked(str))){
+            candidate[1].ycp++;
+        }else if(keccak256(abi.encodePacked("jsp")) == keccak256(abi.encodePacked(str))){
+            candidate[1].jsp++;
+        }else if(keccak256(abi.encodePacked("bjp")) == keccak256(abi.encodePacked(str))){
+            candidate[1].bjp++;
+        }else if(keccak256(abi.encodePacked("cng")) == keccak256(abi.encodePacked(str))){
+            candidate[1].cng++;
+        }else{
+            candidate[1].nota++;
+        }
     }
 
-    function addParty(string memory _name, string memory _symbol, string memory _partyName, string memory location, string memory position) public{
-        if(isParty( _symbol, location, position))
-            return;
-        parties[location][position][_symbol].candidateName = _name;
-        parties[location][position][_symbol].partyName = _partyName;        
+    function getMla() public view returns(Candidate memory){
+        return candidate[0];
     }
 
-    function getVoteCount(string memory _symbol, string memory location, string memory position) public view returns(uint) {
-        return parties[location][position][_symbol].voteCount;
+    function getMp() public view returns(Candidate memory){
+        return candidate[1];
     }
 
-    function castVote(string memory _vid, string memory _symbol, string memory location, string memory position) public checkVoted(_vid) {
-        require(isParty(_symbol, location, position), "Party does not exist");
-        voters[_vid].voted = true;
-        parties[location][position][_symbol].voteCount++;
-    }
 }
